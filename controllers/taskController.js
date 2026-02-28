@@ -1,6 +1,6 @@
 import connection from '../db/diario_db.js';
 
-export function createTask(req, res) {
+export function createTask(req, res) { // store
     const userId = req.user && req.user.userId;
     if (!userId) {
         return res.status(401).json({ error: 'Unauthorized' });
@@ -29,10 +29,12 @@ export function createTask(req, res) {
     );
 }
 
-export function getTasks(req, res) {
+export function getTasks(req, res) { // index
+    
     const userId = req.user && req.user.userId;
+
     if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized' });
+        return res.status(200).json([]);
     }
 
     const sql = `

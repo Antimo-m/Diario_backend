@@ -67,7 +67,30 @@ export const login = (req, res) => {
 
             const token = jwt.sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-            res.json({ message: "Login riuscito", token });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'Lax',
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
+            res.json({ message: "Login riuscito", userId: user.id, username: user.username });
         });
     });
+};
+
+export const logout = (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax"
+    });
+
+    res.clearCookie("secretToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict"
+    });
+
+    res.json({ message: "Logout effettuato con successo" });
 };
